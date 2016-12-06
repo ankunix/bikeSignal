@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">TurnSignal</string>
+    <string name="edit_message">Enter a message</string>
+    <string name="button_send">Send</string>
+    <string name="helloworld">Hello World!</string>
+    <string name="button_sensor">List Sensors</string>
+</resources>
