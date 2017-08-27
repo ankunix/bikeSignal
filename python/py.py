@@ -11,6 +11,7 @@ from os.path import basename
 from numpy import *
 from scipy.stats import skew
 from scipy.stats import kurtosis
+from scipy.constants import g
 from sklearn.model_selection import validation_curve
 from sklearn.cross_validation import train_test_split
 from sklearn.cross_validation import ShuffleSplit
@@ -57,7 +58,7 @@ def data_parser():
         data[key].reset_index()
         print('\n\tAggregating '+str(len(data[key].timestamp))+' timestamps.')
         data[key].timestamp=data[key].timestamp.apply(lambda x:int((x-data[key].timestamp[0])*1e-8))
-        print('\n\tFixed Rate Sampling transformed at 100ms')
+        print('\n\tFixed Rate Sampling transformed at 1decisecond=0.1second interval')
         data[key]=data[key].dropna().groupby('timestamp').agg(aggr)
         print('\n\tData Cleaned to '+str(len(data[key].index))+' timestamps.')
     print('\n\t\t\tData Loaded Successfully!')
@@ -89,3 +90,28 @@ def saveData(filename,data):
 def loadData(filename):
     filehandler = open(filename, 'r')
     return pkl.load(filehandler)
+
+def plot3DEuler(d):
+    ahrs=MadgwickAHRS(sampleperiod=10)
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    for idx,row in d.iterrows():
+        acc=np.array([row['lastAccelerometerValues[0]'],row['lastAccelerometerValues[1]'],row['lastAccelerometerValues[2]']])
+        gyr=np.array([row['lastGyroscopeValues[0]'],row['lastGyroscopeValues[1]'],row['lastGyroscopeValues[2]']])
+        mag=np.array([row['lastMagnetometerValues[0]'],row['lastMagnetometerValues[1]'],row['lastMagnetometerValues[2]']])
+        #print(gyr,acc,mag)
+        color='k'
+        if(row[-1]=='stop'):
+            color='r'
+        elif(row[-1].strip()=='move'):
+            color='g'
+        elif(row[-1].strip()=='right'):
+            color='b'
+        elif(row[-1].strip()=='left'):
+            color='y'
+        ahrs.update(gyr,acc,mag)
+        ax.scatter(ahrs.quaternion.to_euler_angles()[0], ahrs.quaternion.to_euler_angles()[1], ahrs.quaternion.to_euler_angles()[2], c=color, marker='.')
+        ax.set_xlabel('Yaw')
+        ax.set_ylabel('Pitch')
+        ax.set_zlabel('Roll')
+    plt.show()

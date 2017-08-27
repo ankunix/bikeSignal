@@ -23,7 +23,7 @@ from quaternion import Quaternion
 
 
 class MadgwickAHRS:
-    samplePeriod = 1/256
+    samplePeriod = 1/10
     quaternion = Quaternion(1, 0, 0, 0)
     beta = 1
 
