@@ -1,4 +1,5 @@
-import holoviews as hv
+#import holoviews as 
+
 import seaborn as sns
 import pandas as pd
 import numpy as np
@@ -75,13 +76,6 @@ def scatterAll(dt):
     magnt1=scatterPlot(dt,['lastMagnetometerValues[1]'])
     magnt2=scatterPlot(dt,['lastMagnetometerValues[2]'])
     return (accl0+accl1+accl2+gyro0+gyro1+gyro2+magnt0+magnt1+magnt2).cols(3)
-
-def scatterPlot(dt,dims):
-    move=hv.Scatter(dt[dt['label'].str.strip()=='move'].reset_index(), vdims=dims)(style={'color':"green"})
-    stop=hv.Scatter(dt[dt['label'].str.strip()=='stop'].reset_index(), vdims=dims)(style={'color':"red"})
-    right=hv.Scatter(dt[dt['label'].str.strip()=='right'].reset_index(), vdims=dims)(style={'color':"blue"})
-    left=hv.Scatter(dt[dt['label'].str.strip()=='left'].reset_index(), vdims=dims)(style={'color':"yellow"})
-    return move*stop*left*right
 
 def saveData(filename,data):
     filehandler = open(filename, 'w')
